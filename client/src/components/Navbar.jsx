@@ -19,23 +19,25 @@ const Navbar = () => {
           {/* Main Links */}
           <div className="hidden md:flex flex-1 justify-center">
             <div className="flex space-x-8">
-              <Link to="/" className="text-gray-300 hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.8)] px-3 py-2 rounded-md text-sm font-medium transition-all duration-300">
+              <Link to="/candidates" className="text-gray-300 hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.8)] px-3 py-2 rounded-md text-sm font-medium transition-all duration-300">
                 Find Candidates
               </Link>
-              <Link to="#" className="text-gray-300 hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.8)] px-3 py-2 rounded-md text-sm font-medium transition-all duration-300">
-                Find Companies
+              <Link to="/jobs" className="text-gray-300 hover:text-blue-400 hover:drop-shadow-[0_0_8px_rgba(96,165,250,0.8)] px-3 py-2 rounded-md text-sm font-medium transition-all duration-300">
+                Find Jobs
               </Link>
             </div>
           </div>
 
           {/* Auth & User Section */}
           <div className="hidden md:flex flex-1 justify-end items-center space-x-6">
-            <Link to="#" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
+            <Link to="/auth" className="text-gray-300 hover:text-white text-sm font-medium transition-colors">
               Login
             </Link>
-            <button className="bg-blue-600/80 text-white border border-blue-500/50 px-5 py-2 rounded-full text-sm font-medium hover:bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              Register
-            </button>
+            <Link to="/auth">
+              <button className="bg-blue-600/80 text-white border border-blue-500/50 px-5 py-2 rounded-full text-sm font-medium hover:bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Register
+              </button>
+            </Link>
             
             {/* My Account Avatar */}
             <div className="relative group cursor-pointer">
