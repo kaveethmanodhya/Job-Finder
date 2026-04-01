@@ -6,6 +6,7 @@ import CandidateCard from '../components/CandidateCard';
 const SearchPage = () => {
   const [candidates, setCandidates] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCandidates = async () => {
@@ -14,6 +15,7 @@ const SearchPage = () => {
         setCandidates(response.data);
       } catch (error) {
         console.error('Error fetching candidates:', error);
+        setError('Lost connection to the Mainframe. Unable to fetch candidates.');
       } finally {
         setIsLoading(false);
       }
@@ -87,27 +89,50 @@ const SearchPage = () => {
             <div className="mb-6 flex justify-between items-center">
               <h2 className="text-xl font-semibold text-gray-200">
                 {isLoading ? (
-                  <span className="text-blue-400">Loading...</span>
+                  <span className="text-blue-400 animate-pulse font-mono">Syncing Data Grid...</span>
+                ) : error ? (
+                  <span className="text-red-400">System Offline</span>
                 ) : (
                   <><span className="text-blue-400">{candidates.length}</span> Candidates Found</>
                 )}
               </h2>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {candidates.map((candidate) => (
-                <CandidateCard
-                  key={candidate._id}
-                  name={candidate.name}
-                  jobTitle={candidate.jobTitle}
-                  location={candidate.location}
-                  skills={candidate.skills}
-                  profileSource={candidate.profileSource}
-                  profileUrl={candidate.profileUrl}
-                  imageUrl={candidate.imageUrl}
-                />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="w-full flex justify-center items-center py-20">
+                <div className="flex flex-col items-center">
+                   <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-400 rounded-full animate-spin mb-4 shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
+                   <p className="text-blue-400 animate-pulse font-mono tracking-widest uppercase">Syncing Data Grid...</p>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="w-full bg-red-900/20 backdrop-blur-md border border-red-500/30 rounded-2xl p-8 flex flex-col items-center justify-center text-center shadow-[0_0_30px_rgba(239,68,68,0.2)] mt-8">
+                <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+                  <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-red-400 mb-2">Connection Severed</h3>
+                <p className="text-red-200/70">{error}</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {candidates.map((candidate) => (
+                  <CandidateCard
+                    key={candidate._id}
+                    name={candidate.name}
+                    jobTitle={candidate.jobTitle}
+                    location={candidate.location}
+                    skills={candidate.skills}
+                    profileSource={candidate.profileSource}
+                    profileUrl={candidate.profileUrl}
+                    imageUrl={candidate.imageUrl}
+                    totalYearsExperience={candidate.totalYearsExperience}
+                    experienceLevel={candidate.experienceLevel}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

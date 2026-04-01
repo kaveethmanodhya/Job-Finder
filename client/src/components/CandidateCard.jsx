@@ -1,7 +1,7 @@
 import React from 'react';
 import { CheckCircle2, MapPin } from 'lucide-react';
 
-const CandidateCard = ({ name, jobTitle, location, skills, profileSource, profileUrl, imageUrl }) => {
+const CandidateCard = ({ name, jobTitle, location, skills, profileSource, profileUrl, imageUrl, totalYearsExperience, experienceLevel }) => {
   // Get initials for fallback
   const getInitials = (fullName) => {
     return fullName
@@ -39,16 +39,17 @@ const CandidateCard = ({ name, jobTitle, location, skills, profileSource, profil
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-xl font-bold text-white drop-shadow-md">{name}</h3>
-                {profileSource === 'Verified' && (
+                {profileSource === 'LinkedIn_Verified' && (
                   <CheckCircle2 className="w-5 h-5 text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.6)]" />
                 )}
               </div>
               <p className="text-gray-300 font-medium mt-1">{jobTitle}</p>
             </div>
           </div>
-          <div className="flex items-center gap-1 text-gray-400 mt-2 text-sm">
-            <MapPin className="w-4 h-4" />
-            <span>{location}</span>
+          <div className="flex items-center gap-3 text-gray-400 mt-2 text-sm flex-wrap">
+            <span className="flex items-center gap-1"><MapPin className="w-4 h-4" />{location}</span>
+            <span className="flex items-center gap-1 bg-white/5 px-2 py-0.5 rounded border border-white/10 text-cyan-300">{experienceLevel}</span>
+            <span className="flex items-center gap-1 bg-white/5 px-2 py-0.5 rounded border border-white/10 text-blue-300">{totalYearsExperience} YOE</span>
           </div>
         </div>
       </div>

@@ -20,6 +20,11 @@ const candidateRoutes = require('./routes/candidateRoutes');
 // Core Routes
 app.use('/api/candidates', candidateRoutes);
 
+// Welcome message for the root URL
+app.get('/', (req, res) => {
+  res.send('TalentMatch API is beautifully running... 🚀');
+});
+
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is healthy and running.' });
 });
