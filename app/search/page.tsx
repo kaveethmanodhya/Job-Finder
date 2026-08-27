@@ -205,7 +205,7 @@ function SearchPage() {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [externalOnly, setExternalOnly] = useState(false);
 
-  const fetchCandidates = useCallback(async (q: string, loc: string) => {
+  const fetchCandidates = useCallback(async (q: string, loc: string, cat?: string, ctr?: string, exp?: string) => {
     setLoading(true);
     setError(null);
     setHasSearched(true);
@@ -213,6 +213,9 @@ function SearchPage() {
       const params = new URLSearchParams();
       if (q) params.set('q', q);
       if (loc) params.set('location', loc);
+      if (cat && cat !== 'All') params.set('category', cat);
+      if (ctr && ctr !== 'All Countries') params.set('country', ctr);
+      if (exp && exp !== 'All') params.set('exp', exp);
       const res = await fetch(`/api/search?${params}`);
       if (!res.ok) throw new Error(`Server error: ${res.status}`);
       const data = await res.json();
@@ -228,19 +231,28 @@ function SearchPage() {
   useEffect(() => {
     const q = searchParams.get('q') || '';
     const loc = searchParams.get('location') || '';
-    if (q || loc) fetchCandidates(q, loc);
+    const cat = searchParams.get('category') || '';
+    const ctr = searchParams.get('country') || '';
+    const exp = searchParams.get('exp') || '';
+    if (q || loc || cat || ctr || exp) {
+      fetchCandidates(q, loc, cat, ctr, exp);
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSearch = (e?: React.FormEvent) => {
+  const handleSearch = (e?: React.FormEvent, overrideCat?: string, overrideCtr?: string, overrideExp?: string) => {
     if (e) e.preventDefault();
+    const cCat = overrideCat !== undefined ? overrideCat : category;
+    const cCtr = overrideCtr !== undefined ? overrideCtr : country;
+    const cExp = overrideExp !== undefined ? overrideExp : expLevel;
+
     const params = new URLSearchParams();
     if (searchQuery) params.set('q', searchQuery);
     if (location) params.set('location', location);
-    if (category) params.set('category', category);
-    if (country) params.set('country', country);
-    if (expLevel) params.set('exp', expLevel);
+    if (cCat && cCat !== 'All') params.set('category', cCat);
+    if (cCtr && cCtr !== 'All Countries') params.set('country', cCtr);
+    if (cExp && cExp !== 'All') params.set('exp', cExp);
     router.push(`/search?${params}`, { scroll: false });
-    fetchCandidates(searchQuery, location);
+    fetchCandidates(searchQuery, location, cCat, cCtr, cExp);
   };
 
   // Client-side filtering
@@ -312,13 +324,42 @@ function SearchPage() {
 
         {/* Filter dropdowns row */}
         <div className="w-full max-w-3xl mx-auto mb-8 flex flex-wrap gap-2">
-          <FilterDropdown label="Category" value={category} options={CATEGORIES} onChange={setCategory} />
-          <FilterDropdown label="Country" value={country} options={COUNTRIES} onChange={setCountry} />
-          <FilterDropdown label="Experience" value={expLevel} options={EXP_LEVELS} onChange={setExpLevel} />
+          <FilterDropdown
+            label="Category"
+            value={category}
+            options={CATEGORIES}
+            onChange={(val) => {
+              setCategory(val);
+              handleSearch(undefined, val, undefined, undefined);
+            }}
+          />
+          <FilterDropdown
+            label="Country"
+            value={country}
+            options={COUNTRIES}
+            onChange={(val) => {
+              setCountry(val);
+              handleSearch(undefined, undefined, val, undefined);
+            }}
+          />
+          <FilterDropdown
+            label="Experience"
+            value={expLevel}
+            options={EXP_LEVELS}
+            onChange={(val) => {
+              setExpLevel(val);
+              handleSearch(undefined, undefined, undefined, val);
+            }}
+          />
           {activeFilters.length > 0 && (
             <button
               type="button"
-              onClick={() => { setCategory(''); setCountry(''); setExpLevel(''); }}
+              onClick={() => {
+                setCategory('');
+                setCountry('');
+                setExpLevel('');
+                handleSearch(undefined, '', '', '');
+              }}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-white/40 hover:text-white/70 transition-colors ml-auto"
             >
               <X className="w-3 h-3" /> Clear all
@@ -377,7 +418,11 @@ function SearchPage() {
                       <label
                         key={level}
                         className="flex items-center gap-3 cursor-pointer group"
-                        onClick={() => setExpLevel(expLevel === level ? '' : level)}
+                        onClick={() => {
+                          const nextExp = expLevel === level ? '' : level;
+                          setExpLevel(nextExp);
+                          handleSearch(undefined, undefined, undefined, nextExp);
+                        }}
                       >
                         <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors flex-shrink-0 ${expLevel === level ? 'border-emerald-500 bg-emerald-500' : 'border-white/20 group-hover:border-emerald-500/50'
                           }`}>
